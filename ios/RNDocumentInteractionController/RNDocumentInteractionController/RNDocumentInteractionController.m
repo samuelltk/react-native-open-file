@@ -31,7 +31,7 @@ RCT_EXPORT_METHOD(open: (NSString *)path resolver:(RCTPromiseResolveBlock)resolv
     }
     self.FileOpener = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
     self.FileOpener.delegate = self;
-    BOOL canPreview=false;//[self.FileOpener presentPreviewAnimated:YES];
+    BOOL canPreview=[self.FileOpener presentPreviewAnimated:YES];
     if(!canPreview){
         UIViewController *ctrl = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
         
