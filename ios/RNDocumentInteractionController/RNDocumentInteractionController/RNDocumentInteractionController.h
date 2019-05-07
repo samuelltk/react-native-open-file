@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "RCTBridgeModule.h"
+@import UIKit;
 
 @interface RNDocumentInteractionController : NSObject <RCTBridgeModule>
-
+@property (nonatomic) UIDocumentInteractionController * FileOpener;
 @end
-
