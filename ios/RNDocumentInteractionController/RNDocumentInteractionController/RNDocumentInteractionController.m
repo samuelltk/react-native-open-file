@@ -18,16 +18,24 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(open: (NSURL *)path resolver:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(open: (NSString *)path resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:path];
-    interactionController.delegate = self;
-    BOOL canPreview=[interactionController presentPreviewAnimated:YES];
+    NSURL *fileURL = [NSURL fileURLWithPath:path];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if(![fileManager fileExistsAtPath:fileURL.path]) {
+        NSError *error = [NSError errorWithDomain:@"File not found" code:404 userInfo:nil];
+        reject(@"File not found", @"File not found", error);
+        return;
+    }
+    self.FileOpener = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+    self.FileOpener.delegate = self;
+    BOOL canPreview=false;//[self.FileOpener presentPreviewAnimated:YES];
     if(!canPreview){
         UIViewController *ctrl = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
         
-        BOOL wasOpened = [interactionController presentOpenInMenuFromRect:ctrl.view.bounds inView:ctrl.view animated:YES];
+        BOOL wasOpened = [self.FileOpener presentOpenInMenuFromRect:ctrl.view.bounds inView:ctrl.view animated:YES];
         if(wasOpened){
             resolve(@"other app can open this file");
         }else{
